@@ -1,3 +1,14 @@
+# main_S3DIS.py, serves as the main entry point for running experiments on the S3DIS dataset
+# using the SQN (Sparse Quantized Network) framework. It imports necessary modules for model definition,
+# data processing, configuration, and evaluation. The key components are:
+# - Network: The main neural network architecture from SQN.
+# - ModelTester: A class for evaluating the trained model on S3DIS data.
+# - read_ply: Utility for reading .ply point cloud files.
+# - ConfigS3DIS: Configuration parameters specific to S3DIS experiments.
+# - DataProcessing: Utilities for data augmentation, subsampling, and batching.
+# - Plot: Visualization utilities.
+# - Standard libraries: TensorFlow for deep learning, NumPy for numerical operations, and others for
+#   file handling, argument parsing, and timing.
 from os.path import join, dirname, abspath, exists
 from SQN import Network
 from tester_S3DIS import ModelTester
@@ -14,7 +25,8 @@ class S3DIS:
     def __init__(self, test_area_idx, labeled_point, retrain):
         self.name = 'S3DIS'
         # set your dataset path here
-        root_path = '/data/qy/Dataset'
+        # root_path = '/data/qy/Dataset'
+        root_path = '/media/yinchao/code/SQN/data'
         self.path = join(root_path, self.name)
         self.label_to_names = {0: 'unlabel', 1: 'ceiling', 2: 'floor', 3: 'wall', 4: 'beam', 5: 'column', 6: 'window',
                                7: 'door', 8: 'table', 9: 'chair', 10: 'sofa', 11: 'bookcase', 12: 'board',
@@ -73,21 +85,30 @@ class S3DIS:
             # ======================================== #
             #          Random Sparse Annotation        #
             # ======================================== #
+            # This block implements random sparse annotation for the training set.
+            # The goal is to simulate having only a subset of points with ground truth labels,
+            # either as a percentage of all points or as a fixed number per class.
+
             if cloud_split == 'training':
                 if '%' in labeled_point:
+                    # If labeled_point is a percentage (e.g., '10%'), randomly select that percentage of points to keep their labels.
                     num_pts = len(sub_labels)
-                    r = float(labeled_point[:-1]) / 100
-                    num_with_anno = max(int(num_pts * r), 1)
+                    r = float(labeled_point[:-1]) / 100  # Convert percentage string to float (e.g., '10%' -> 0.1)
+                    num_with_anno = max(int(num_pts * r), 1)  # At least one point should be labeled
                     num_without_anno = num_pts - num_with_anno
+                    # Randomly choose indices to remove labels from (set to 0)
                     idx_without_anno = np.random.choice(num_pts, num_without_anno, replace=False)
                     sub_labels[idx_without_anno] = 0
                 else:
+                    # If labeled_point is an integer, for each class, keep only that many labeled points.
                     for i in range(self.num_classes):
-                        ind_per_class = np.where(sub_labels == i)[0]  # index of points belongs to a specific class
+                        # Find indices of points belonging to class i
+                        ind_per_class = np.where(sub_labels == i)[0]
                         num_per_class = len(ind_per_class)
                         if num_per_class > 0:
                             num_with_anno = int(labeled_point)
                             num_without_anno = num_per_class - num_with_anno
+                            # Randomly choose indices within this class to remove labels from (set to 0)
                             idx_without_anno = np.random.choice(ind_per_class, num_without_anno, replace=False)
                             sub_labels[idx_without_anno] = 0
 

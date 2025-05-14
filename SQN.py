@@ -194,6 +194,7 @@ class Network:
                        self.logits,
                        self.labels,
                        self.accuracy]
+                # BUG: the program will crash here! How to fix it? 1)dataset is normal, 2)network is normal, 3)setting? FIXED: the problem is the tensorflow version, see yc.md (just use tensorflow 1.11.0)
                 _, _, summary, l_out, probs, labels, acc = self.sess.run(ops, {self.is_training: True})
                 self.train_writer.add_summary(summary, self.training_step)
                 t_end = time.time()

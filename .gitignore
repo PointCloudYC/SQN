@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+data/S3DIS/**
+
+train_log_S3DIS/**
+log_*.txt
+tf_ops copy/**

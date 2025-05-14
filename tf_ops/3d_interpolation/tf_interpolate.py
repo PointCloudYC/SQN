@@ -11,7 +11,7 @@ interpolate_module = tf.load_op_library(os.path.join(BASE_DIR, 'tf_interpolate_s
 ROOT_DIR = dirname(dirname(dirname(__file__)))
 sys.path.append(ROOT_DIR)
 sys.path.append(os.path.join(ROOT_DIR, 'utils'))
-import nearest_neighbors.lib.python.nearest_neighbors as nearest_neighbors
+import utils.nearest_neighbors.lib.python.nearest_neighbors as nearest_neighbors
 import os
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"

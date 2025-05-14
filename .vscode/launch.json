@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "S3DIS: Train",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main_S3DIS.py",
+            "args": [
+                "--mode", "train",
+                "--gpu", "0",
+                "--test_area", "5",
+                "--labeled_point", "0.1%"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+        }
+    ]
+} 
